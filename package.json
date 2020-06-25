@@ -2,6 +2,10 @@
   "name": "mqtt-to-http-bridge",
   "version": "1.0.0",
   "description": "Bridges messages from MQTT brokers to HTTP endpoints.",
+  "engines": {
+    "node": "12.18.0",
+    "yarn": "^1.22.4"
+  },
   "main": "./src/index",
   "bin": { "mqtt-to-http": "./bin/mqtt-to-http-bridge" },
   "scripts": {
