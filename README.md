@@ -42,10 +42,14 @@ If the message received was "Hello World", the endpoint would receive the follow
 ```
 
 ## Installation
-MQTT to HTTP Bridge is a command line tool written in [Node.js](https://nodejs.org). To install the service, run the following command:
+MQTT to HTTP Bridge is a command line tool written in [Node.js](https://nodejs.org). To install the service, run one of the following commands:
 
 ```
-npm install -g mqtt-to-http-bridge
+yarn global add mqtt-to-http-bridge
+```
+or
+```
+npm install --global mqtt-to-http-bridge
 ```
 
 ## Usage
