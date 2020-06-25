@@ -22,13 +22,12 @@ const requeue = function(log, config, queues, httpEndpoint, queueMsg) {
   if (queueMsg.attempts < config.maxAttempts - 1) {
     const queue = queues[httpEndpoint];
     const timeout = Math.pow(config.backoffMultiplier, queueMsg.attempts) * 1000;
-    log.debug('Requeuing message in %s milliseconds. %s -> %s', timeout, queueMsg.data.topic, httpEndpoint);
+    log.debug(`Requeuing message in ${timeout} milliseconds. ${queueMsg.data.topic} -> ${httpEndpoint}`);
     setTimeout(() => { queue.push(queueMsg); }, timeout);
     queueMsg.attempts++;
     return timeout;
   } else {
-    log.error('Failed. Maximum attempts exceeded (%s). Message dropped. %s -> %s',
-      config.maxAttempts, queueMsg.data.topic, httpEndpoint);
+    log.error(`Failed. Maximum attempts exceeded (${config.maxAttempts}). Message dropped. ${queueMsg.data.topic} -> ${httpEndpoint}`);
   }
 };
 
@@ -45,7 +44,7 @@ const requeue = function(log, config, queues, httpEndpoint, queueMsg) {
  */
 const bridgeWorker = function(log, config, queues, httpEndpoint, queueMsg, done) {
 
-  log.debug('Bridging message: %s -> %s', queueMsg.data.topic, httpEndpoint);
+  log.debug(`Bridging message: ${queueMsg.data.topic} -> ${httpEndpoint}`);
 
   axios.post(httpEndpoint, queueMsg.data,
     {
@@ -55,10 +54,10 @@ const bridgeWorker = function(log, config, queues, httpEndpoint, queueMsg, done)
       headers: { 'content-type': 'application/json' }
     })
     .then(() => {
-      log.debug('Success. %s -> %s', queueMsg.data.topic, httpEndpoint);
+      log.debug(`Success. ${queueMsg.data.topic} -> ${httpEndpoint}`);
     })
     .catch((err) => {
-      log.warn('Failed: %s. %s -> %s', err.message, queueMsg.data.topic, httpEndpoint);
+      log.warn(`Failed: ${err.message}. ${queueMsg.data.topic} -> ${httpEndpoint}`);
 
       if (err.response) {
         if (err.response.status === 429 || err.response.status >= 500) {
@@ -98,7 +97,7 @@ const messageReceived = function(log, config, queues, topic, message) {
     if (queue.length() < config.maxQueueLength) {
       queues[endpoint].push(queueMsg);
     } else {
-      log.error('Failed. Maximum queue length exceeded. Message dropped. Bridge: %s -> %s', topic, endpoint);
+      log.error(`Failed. Maximum queue length exceeded. Message dropped. Bridge: ${topic} -> ${endpoint}`);
     }
   });
 };
@@ -132,7 +131,7 @@ const connectToBroker = function(log, config) {
         if (timeout > config.maxBrokerConnectWait) {
           timeout = config.maxBrokerConnectWait;
         }
-        log.error('Failed to connect to broker: %s. %s. Retrying in %s milliseconds.', config.mqttEndpoint, err.message, timeout);
+        log.error(`Failed to connect to broker: ${config.mqttEndpoint}. ${err.message}. Retrying in ${timeout} milliseconds.`);
         setTimeout(attemptConnection, timeout);
         attempt++;
       });
@@ -170,15 +169,15 @@ module.exports = async (log, config) => {
   let messagesCount = 0;
 
   const [ mqttClient, mqttOptions ] = await connectToBroker(log, config);
-  log.debug('Successfully connected to broker: %s', config.mqttEndpoint);
+  log.debug(`Successfully connected to broker: ${config.mqttEndpoint}`);
 
   await subscribeToTopics(config, mqttClient);
 
-  mqttClient.on('error', (err) => { log.error('Connection error to broker %s. Error: %s', config.mqttEndpoint, err.message); });
-  mqttClient.on('offline', () => { log.error('Disconnected from broker (OFFLINE) %s', config.mqttEndpoint); });
-  mqttClient.on('close', () => { log.error('Disconnected from broker (CLOSE) %s', config.mqttEndpoint); });
-  mqttClient.on('disconnect', () => { log.error('Disconnect initiated by broker %s', config.mqttEndpoint); });
-  mqttClient.on('connect', () => { log.debug('Connected to broker %s', config.mqttEndpoint); });
+  mqttClient.on('error', (err) => { log.error(`Connection error to broker ${config.mqttEndpoin}. Error: ${err.message}`); });
+  mqttClient.on('offline', () => { log.error(`Disconnected from broker (OFFLINE) ${config.mqttEndpoint}`); });
+  mqttClient.on('close', () => { log.error(`Disconnected from broker (CLOSE) ${config.mqttEndpoint}`); });
+  mqttClient.on('disconnect', () => { log.error(`Disconnect initiated by broker ${config.mqttEndpoint}`); });
+  mqttClient.on('connect', () => { log.debug(`Connected to broker ${config.mqttEndpoint}`); });
 
   // Each configured HTTP endpoint has its own queue.
   config.httpEndpoints.forEach((endpoint) => {

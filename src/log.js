@@ -1,20 +1,29 @@
-const debug = require('debug');
+const { createLogger, format, transports } = require('winston');
+const { combine, timestamp, printf } = format;
 
-const logLevels = ['debug', 'warn', 'error', 'diagnostics', 'none'];
+const logFormat = printf((m) => {
+  return `${m.timestamp} [${m.level}]: ${typeof m.message === 'string' ? m.message : JSON.stringify(m.message, undefined, 2)}`;
+});
+
+const levels = {
+  diagnostics: 0,
+  error: 1,
+  warn: 2,
+  debug: 3
+};
 
 module.exports = (level) => {
 
-  const levelIdx = logLevels.indexOf(level);
-  const debugConfs = [];
-  for (let idx = levelIdx; idx < logLevels.length; idx++) {
-    debugConfs.push(`mqtt-http-bridge:${logLevels[idx]}`);
-  }
-  debug.enable(debugConfs.join(','));
-
-  return {
-    debug: debug('mqtt-http-bridge:debug'),
-    warn: debug('mqtt-http-bridge:warn'),
-    error: debug('mqtt-http-bridge:error'),
-    diagnostics: debug('mqtt-http-bridge:diagnostics')
-  };
+  return createLogger({
+    levels: levels,
+    level: level,
+    silent: level === 'none',
+    format: combine(
+      timestamp(),
+      logFormat
+    ),
+    transports: [
+      new transports.Console()
+    ]
+  });
 };
