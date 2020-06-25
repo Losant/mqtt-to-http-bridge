@@ -116,37 +116,35 @@ module.exports = (base) => {
     throw new Error('At least one bridge configuration is required.');
   }
 
-  for (const name in config.bridges) {
-    if (Object.hasOwnProperty.call(config.bridges, name)) {
-      const bridge = config.bridges[name];
+  Object.keys(config.bridges).forEach((name) => {
+    const bridge = config.bridges[name];
 
-      integerConfigFields.forEach((field) => {
-        if (!isValidNumber(bridge[field])) {
-          throw new Error(`Invalid value for ${field}. Value must be an integer greater than 0.`);
-        }
-      });
-
-      bridge.concurrency = bridge.concurrency || DEFAULT_CONCURRENCY;
-      bridge.maxAttempts = bridge.maxAttempts || DEFAULT_MAX_ATTEMPTS;
-      bridge.timeout = bridge.timeout || DEFAULT_TIMEOUT;
-      bridge.backoffMultiplier = bridge.backoffMultiplier || DEFAULT_BACKOFF_MULTIPLIER;
-      bridge.maxQueueLength = bridge.maxQueueLength || DEFAULT_MAX_QUEUE_LENGTH;
-      bridge.maxBrokerConnectWait = bridge.maxBrokerConnectWait || DEFAULT_MAX_BROKER_CONNECT_WAIT;
-      bridge.brokerConnectBackoffMultiplier = bridge.brokerConnectBackoffMultiplier || DEFAULT_BROKER_CONNECT_BACKOFF_MULTIPLIER;
-
-      if (!isValidArrayOfURLs(bridge.httpEndpoints, ['http:', 'https:'])) {
-        throw new Error('Invalid value for httpEndpoints. Value must be an array of valid URLs. Ex: [ "https://example.com/bridge" ]');
+    integerConfigFields.forEach((field) => {
+      if (!isValidNumber(bridge[field])) {
+        throw new Error(`Invalid value for ${field}. Value must be an integer greater than 0.`);
       }
+    });
 
-      if (!isValidArrayOfURLs([bridge.mqttEndpoint], ['mqtt:', 'mqtts:', 'ws:', 'wss:'])) {
-        throw new Error('Invalid value for mqttEndpoint. Value must be a valid URL. Ex: "mqtt://localhost:1883"');
-      }
+    bridge.concurrency = bridge.concurrency || DEFAULT_CONCURRENCY;
+    bridge.maxAttempts = bridge.maxAttempts || DEFAULT_MAX_ATTEMPTS;
+    bridge.timeout = bridge.timeout || DEFAULT_TIMEOUT;
+    bridge.backoffMultiplier = bridge.backoffMultiplier || DEFAULT_BACKOFF_MULTIPLIER;
+    bridge.maxQueueLength = bridge.maxQueueLength || DEFAULT_MAX_QUEUE_LENGTH;
+    bridge.maxBrokerConnectWait = bridge.maxBrokerConnectWait || DEFAULT_MAX_BROKER_CONNECT_WAIT;
+    bridge.brokerConnectBackoffMultiplier = bridge.brokerConnectBackoffMultiplier || DEFAULT_BROKER_CONNECT_BACKOFF_MULTIPLIER;
 
-      if (!isValidArrayOfStrings(bridge.topics)) {
-        throw new Error('Invalid value for topics. Value must be an array of strings. Ex: [ "test/topic" ]');
-      }
+    if (!isValidArrayOfURLs(bridge.httpEndpoints, ['http:', 'https:'])) {
+      throw new Error('Invalid value for httpEndpoints. Value must be an array of valid URLs. Ex: [ "https://example.com/bridge" ]');
     }
-  }
+
+    if (!isValidArrayOfURLs([bridge.mqttEndpoint], ['mqtt:', 'mqtts:', 'ws:', 'wss:'])) {
+      throw new Error('Invalid value for mqttEndpoint. Value must be a valid URL. Ex: "mqtt://localhost:1883"');
+    }
+
+    if (!isValidArrayOfStrings(bridge.topics)) {
+      throw new Error('Invalid value for topics. Value must be an array of strings. Ex: [ "test/topic" ]');
+    }
+  });
 
   return config;
 };

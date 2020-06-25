@@ -23,14 +23,13 @@ try {
 // Create all the bridges.
 const log = require('./log')(conf.logLevel);
 const bridges = [];
-for (const name in conf.bridges) {
-  if (Object.prototype.hasOwnProperty.call(conf.bridges, name)) {
-    bridge(log, conf.bridges[name]).then((b) => bridges.push(b)).catch((err) => {
-      console.log(`ERROR: ${err.message}`);
-      process.exit(1);
-    });
-  }
-}
+Object.keys(conf.bridges).forEach((name) => {
+  bridge(log, conf.bridges[name]).then((b) => bridges.push(b)).catch((err) => {
+    console.log(`ERROR: ${err.message}`);
+    process.exit(1);
+  });
+});
+
 
 // If diagnostics environment variable is set to true,
 // print memory and queue lengths every minute.
@@ -50,5 +49,5 @@ if (process.env.PRINT_DIAGNOSTICS === 'true') {
     log.diagnostics(diagnostics);
   };
 
-  setInterval(printDiagnostics, 60000);
+  setInterval(printDiagnostics, 1000);
 }

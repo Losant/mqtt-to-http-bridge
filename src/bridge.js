@@ -93,16 +93,14 @@ const messageReceived = function(log, config, queues, topic, message) {
     attempts: 0
   };
 
-  for (const endpoint in queues) {
-    if (Object.prototype.hasOwnProperty.call(queues, endpoint)) {
-      const queue = queues[endpoint];
-      if (queue.length() < config.maxQueueLength) {
-        queues[endpoint].push(queueMsg);
-      } else {
-        log.error('Failed. Maximum queue length exceeded. Message dropped. Bridge: %s -> %s', topic, endpoint);
-      }
+  Object.keys(queues).forEach((endpoint) => {
+    const queue = queues[endpoint];
+    if (queue.length() < config.maxQueueLength) {
+      queues[endpoint].push(queueMsg);
+    } else {
+      log.error('Failed. Maximum queue length exceeded. Message dropped. Bridge: %s -> %s', topic, endpoint);
     }
-  }
+  });
 };
 
 /**
@@ -204,11 +202,9 @@ module.exports = async (log, config) => {
    */
   const getQueueLength = () => {
     const result = {};
-    for (const endpoint in queues) {
-      if (Object.prototype.hasOwnProperty.call(queues, endpoint)) {
-        result[endpoint] = queues[endpoint].length();
-      }
-    }
+    Object.keys(queues).forEach((endpoint) => {
+      result[endpoint] = queues[endpoint].length();
+    });
     return result;
   };
 
