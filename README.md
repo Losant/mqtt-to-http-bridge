@@ -6,11 +6,11 @@ Broker(s) -> Bridge -> HTTP Endpoint(s)
 ```
 
 ## How it Works
-The MQTT to HTTP Bridge forms client connections to one or more MQTT brokers. It then subscribes to one or more MQTT topics. Any message received over those topics are POSTed as JSON to one or more HTTP endpoints.
+The MQTT to HTTP Bridge forms client connections to one or more MQTT brokers. It then subscribes to one or more MQTT topics. Any messages received over those topics are POSTed as JSON to one or more HTTP endpoints.
 
-The brokers, topics, and HTTP endpoints are configured using a TOML file that is passed to the service as a command line argument.
+The brokers, topics, and HTTP endpoints are configured using a TOML file that is passed to the service as a command-line argument.
 
-## Basic Example
+## Example
 Example `config.toml` file:
 ```
 [bridges]
@@ -31,7 +31,7 @@ mqtt-to-http-bridge /path/to/config.toml
 
 This example creates a single bridge connection to the MQTT broker at `mqtts://example.com`. It then subscribes to `your/topic`. Any message received on that topic is forwarded to `https://example.com/data`.
 
-If the message received was "Hello World", the endpoint would receive the following JSON body:
+If the message received was "Hello World" the endpoint receives the following JSON body:
 
 ```
 {
@@ -42,7 +42,7 @@ If the message received was "Hello World", the endpoint would receive the follow
 ```
 
 ## Installation
-MQTT to HTTP Bridge is a command line tool written in [Node.js](https://nodejs.org). To install the service, run one of the following commands:
+MQTT to HTTP Bridge is a command-line tool written in [Node.js](https://nodejs.org). To install the service, run one of the following commands:
 
 ```
 yarn global add mqtt-to-http-bridge
@@ -112,12 +112,12 @@ Three log levels are supported: `debug`, `warn`, `error`. The default is `warn`.
 * `error` - Prints a message when a forward fails and will not be received by the HTTP endpoint. Examples: exceeded the maximum number of retries or maximum queue length exceeded.
 
 ## Message Queues
-Each bridge is configured with one or more HTTP endpoints that will receive forwarded messages. To circumvent potential intermittent network interruptions, an in-memory queue is created for each configured HTTP endpoint. The `maxQueueLength` configuration field controls how large each queue is allowed to be (in number of messages) before new messages are discarded.
+Each bridge is configured with one or more HTTP endpoints that receive forwarded messages. To circumvent potential intermittent network interruptions, an in-memory queue is created for each configured HTTP endpoint. The `maxQueueLength` configuration field controls how large each queue is allowed to be (in number of messages) before new messages are discarded.
 
-If a message fails to be forwarded, it will be requeued with a delay. The delay is controlled by the `backOffMultiplier` configuration field. For example, if the multiplier is set to 2, the delay between attempts will be 1000, 2000, 4000, 8000, etc milliseconds. A message will be attempted a maximum number of times, which is set by the `maxAttempts` configuration field.
+If a message fails to be forwarded, it will be requeued with a delay. The delay is controlled by the `backOffMultiplier` configuration field. For example, if the multiplier is set to 2, the delay between attempts will be 1000, 2000, 4000, 8000, etc., milliseconds. A message will be attempted a maximum number of times, which is set by the `maxAttempts` configuration field.
 
 ## Message Encoding
-The MQTT specification does not does provide any requirements or recommendations for how your messages are encoded. This service will encode any message received as a UTF-8 string. That string is then encoded as JSON as part of the final body sent to the HTTP endpoint.
+The MQTT specification does not does provide any requirements or recommendations for how your messages are encoded. This service encodes any message received as a UTF-8 string. That string is then encoded as JSON as part of the final body sent to the HTTP endpoint.
 
 ## Initial Connections and Errors
 When this service starts, it will attempt to make an initial connection to each configured MQTT broker indefinitely. Once a connection is established, each client then attempts to subscribe to all configured topics. If a subscription fails, it will not be re-attempted and the process will exit.
@@ -132,7 +132,7 @@ These instructions are assuming the following HiveMQ configuration:
 * `url` - "mqtt://localhost:1883"
 * `topic` - "telemetry/{device-mac-address}/{sensor-type}"
 
-For example, a device with a MAC address of `00:1B:44:11:3A:B7` reporting a temperature value will publish a message to the following topic:
+For example, a device with a MAC address of `00:1B:44:11:3A:B7` reporting a temperature value publishes a message to the following topic:
 
 ```
 telemetry/00:1B:44:11:3A:B7/temperature
@@ -141,7 +141,7 @@ telemetry/00:1B:44:11:3A:B7/temperature
 ### 1. Create Losant Webhook
 A [Losant Webhook](https://docs.losant.com/applications/webhooks/) provides a unique URL that can be used to report data into the Losant Enterprise IoT Platform. For this example, the webhook was configured with basic authentication with the username and password set to `WebhookUser` and `WebhookPass` respectively.
 
-This will result in a webhook URL in the following format:
+This results in a webhook URL in the following format:
 
 ```
 https://triggers.losant.com/webhooks/{your-unique-id}
