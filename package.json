@@ -1,0 +1,53 @@
+{
+  "name": "mqtt-to-http-bridge",
+  "version": "1.0.0",
+  "description": "Bridges messages from MQTT brokers to HTTP endpoints.",
+  "engines": {
+    "node": "^12.18.0",
+    "yarn": "^1.22.4"
+  },
+  "main": "./src/index",
+  "bin": {
+    "mqtt-to-http": "./bin/mqtt-to-http-bridge"
+  },
+  "scripts": {
+    "test": "jest test",
+    "lint": "eslint --ext .js src test"
+  },
+  "author": "Brandon Cannaday <brandon@losant.com> (https://www.losant.com)",
+  "license": "MIT",
+  "dependencies": {
+    "async-mqtt": "^2.6.0",
+    "axios": "^0.19.2",
+    "fastq": "^1.8.0",
+    "mqtt": "^4.1.0",
+    "toml": "^3.0.0",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "@losant/eslint-config-losant": "^1.3.11",
+    "aedes": "^0.42.2",
+    "eslint-plugin-jest": "^23.13.2",
+    "husky": "^4.2.5",
+    "jest": "^26.0.1",
+    "killable": "^1.0.1",
+    "lint-staged": "^10.2.11"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": "esw"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@losant/eslint-config-losant/env/node",
+      "plugin:jest/recommended"
+    ]
+  }
+}
