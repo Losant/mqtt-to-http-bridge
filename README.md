@@ -172,6 +172,6 @@ To ensure the service restarts on any expected errors or system restarts, it's r
 
 ---
 
-Copyright (c) 2020 Losant IoT, Inc
+Copyright (c) 2022 Losant IoT, Inc
 
 https://www.losant.com
